@@ -18,13 +18,12 @@ security:
             stateless: true
 
         login:
-            pattern: ^/api/public/.*$
+            pattern: ^/api/public/login
             stateless: true
             provider: user
-            json_login:
-                check_path: /api/public/login
-                success_handler: lexik_jwt_authentication.handler.authentication_success
-                failure_handler: lexik_jwt_authentication.handler.authentication_failure
+            guard:
+                authenticators:
+                    - App\Security\EmailAuthenticator
 
         api:
             pattern: ^/api
