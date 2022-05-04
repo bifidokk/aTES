@@ -2,34 +2,41 @@
 
 namespace App\Service\User;
 
+use App\Entity\User;
+use App\Repository\UserRepository;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
-use Symfony\Component\Security\Core\Exception\UserNotFoundException;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 
-/**
- * @method UserInterface loadUserByIdentifier(string $identifier)
- */
 class UserProvider implements UserProviderInterface
 {
+    private UserRepository $userRepository;
+
+    public function __construct(UserRepository $userRepository)
+    {
+        $this->userRepository = $userRepository;
+    }
 
     public function refreshUser(UserInterface $user)
     {
-        // TODO: Implement refreshUser() method.
+        if (!$user instanceof User) {
+            throw new UnsupportedUserException(
+                sprintf('Instances of "%s" are not supported.', \get_class($user))
+            );
+        }
+
+        return $this->loadUserByUsername($user->getEmail());
     }
 
     public function supportsClass(string $class)
     {
-        // TODO: Implement supportsClass() method.
+        return $class === User::class;
     }
 
     public function loadUserByUsername(string $username)
     {
-        // TODO: Implement loadUserByUsername() method.
-    }
+        $user = $this->userRepository->findUserByEmail($username);
 
-    public function __call(string $name, array $arguments)
-    {
-        // TODO: Implement @method UserInterface loadUserByIdentifier(string $identifier)
+        return $user;
     }
 }
