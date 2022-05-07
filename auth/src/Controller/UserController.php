@@ -49,7 +49,7 @@ class UserController
         $this->userProducer->publish(json_encode([
             'event' => 'User.Created',
             'user' => $user->toArray(),
-        ]));
+        ]), 'user_stream');
 
         try {
             $this->entityManager->persist($user);
@@ -92,6 +92,8 @@ class UserController
             $rolesUpdated = true;
         }
 
+        $user->setUpdatedAt(new \DateTime());
+
         try {
             $this->entityManager->persist($user);
             $this->entityManager->flush();
@@ -104,13 +106,13 @@ class UserController
         $this->userProducer->publish(json_encode([
             'event' => 'User.Updated',
             'user' => $user->toArray(),
-        ]));
+        ]), 'user_stream');
 
         if ($rolesUpdated) {
             $this->userProducer->publish(json_encode([
                 'event' => 'User.RoleChanged',
                 'user' => $user->toArray(),
-            ]));
+            ]), 'user');
         }
 
         return new JsonResponse([

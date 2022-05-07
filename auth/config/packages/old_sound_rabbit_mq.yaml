@@ -6,7 +6,7 @@ old_sound_rabbit_mq:
         # use 'old_sound_rabbit_mq.task_producer' service to send data.
         user:
             connection:       default
-            exchange_options: { name: 'user', type: direct }
+            exchange_options: { name: 'user', type: topic }
 #    consumers:
 #        task:
 #            connection:       default

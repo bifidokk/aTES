@@ -36,6 +36,11 @@ class User implements UserInterface
     protected \DateTime $createdAt;
 
     /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    protected ?\DateTime $updatedAt;
+
+    /**
      * @ORM\Column(type="string", length=36)
      */
     protected string $publicId = '';
@@ -48,6 +53,7 @@ class User implements UserInterface
     public function __construct()
     {
         $this->createdAt = new \DateTime();
+        $this->updatedAt = new \DateTime();
         $this->publicId = Uuid::v4()->toRfc4122();
     }
 
@@ -115,13 +121,26 @@ class User implements UserInterface
         return $this->publicId;
     }
 
+
+    public function getUpdatedAt(): \DateTime
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(\DateTime $updatedAt): void
+    {
+        $this->updatedAt = $updatedAt;
+    }
+
     public function toArray(): array
     {
         return [
             'email' => $this->email,
             'name' => $this->name,
             'roles' => $this->roles,
-            'public_id' => $this->getPublicId(),
+            'public_id' => $this->publicId,
+            'created_at' => $this->createdAt->format(DATE_ATOM),
+            'updated_at' => $this->updatedAt?->format(DATE_ATOM),
         ];
     }
 }
