@@ -104,10 +104,29 @@ class Task
         $this->status = $status;
     }
 
+    public function mightBeMarkedAsCompleted(): bool
+    {
+        return $this->status === self::STATUS_ASSIGNED;
+    }
+
+    public function complete(): void
+    {
+        $this->setStatus(self::STATUS_COMPLETED);
+        $this->setUpdatedAt(new \DateTime());
+    }
+
+    /**
+     * @param \DateTime $updatedAt
+     */
+    public function setUpdatedAt(\DateTime $updatedAt): void
+    {
+        $this->updatedAt = $updatedAt;
+    }
+
     public function toArray(): array
     {
         return [
-            'id' => $this->id,
+            'public_id' => $this->publicId,
             'name' => $this->name,
             'status' => $this->status,
             'assignee' => $this->assignee->getPublicId(),

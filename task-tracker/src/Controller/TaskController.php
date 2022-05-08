@@ -79,4 +79,34 @@ class TaskController
 
         return new JsonResponse($task->toArray());
     }
+
+    #[Route('/api/task/{id}/complete', name: 'complete_task', methods: ['POST'])]
+    public function completeTask(Request $request, string $id): JsonResponse
+    {
+        $user = $this->tokenStorage->getToken()->getUser();
+        $task = $this->taskRepository->findOneBy([
+            'publicId' => $id,
+        ]);
+
+        if (!$task instanceof Task) {
+            throw new HttpException(422, 'Invalid user');
+        }
+
+        if ($task->getAssignee()->getId() !== $user->getId()) {
+            throw new HttpException(422, 'Not granted');
+        }
+
+        if (!$task->mightBeMarkedAsCompleted()) {
+            throw new HttpException(422, 'Not granted');
+        }
+
+        $task->complete();
+
+        $this->entityManager->persist($task);
+        $this->entityManager->flush();
+
+        // dispatch Task.Completed event
+
+        return new JsonResponse($task->toArray());
+    }
 }
