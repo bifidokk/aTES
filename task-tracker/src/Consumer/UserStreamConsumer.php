@@ -50,9 +50,8 @@ class UserStreamConsumer implements ConsumerInterface
             ]);
 
             if ($user === null) {
-                $user = new User();
-                $user->setEmail($content['user']['email']);
-                $user->setPublicId($content['user']['public_id']);
+                // add logs
+                return true;
             }
         } else {
             $user = new User();

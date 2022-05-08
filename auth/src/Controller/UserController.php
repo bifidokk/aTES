@@ -29,7 +29,7 @@ class UserController
         $this->userProducer = $userProducer;
     }
 
-    #[Route('/api/user/create', name: 'user_create')]
+    #[Route('/api/user/create', name: 'user_create', methods: ['POST'])]
     public function createUser(Request $request): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
@@ -65,7 +65,7 @@ class UserController
         ]);
     }
 
-    #[Route('/api/user/{id}/update', name: 'user_update')]
+    #[Route('/api/user/{id}/update', name: 'user_update', methods: ['POST'])]
     public function updateUser(Request $request, string $id): JsonResponse
     {
         $user = $this->userRepository->findOneBy([

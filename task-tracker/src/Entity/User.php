@@ -14,6 +14,11 @@ use Symfony\Component\Uid\Uuid;
  */
 class User implements UserInterface
 {
+    private const MANAGER_ROLES = [
+        'ROLE_ADMIN',
+        'ROLE_MANAGER',
+    ];
+
     /**
      * @ORM\Id
      * @ORM\Column(type="string", length=36)
@@ -73,9 +78,6 @@ class User implements UserInterface
         $this->assignedTasks = new ArrayCollection();
     }
 
-    /**
-     * @return string|null
-     */
     public function getId(): ?string
     {
         return $this->id;
@@ -89,49 +91,31 @@ class User implements UserInterface
         return array_unique($roles);
     }
 
-    /**
-     * @param string $email
-     */
     public function setEmail(string $email): void
     {
         $this->email = $email;
     }
 
-    /**
-     * @param string $name
-     */
     public function setName(string $name): void
     {
         $this->name = $name;
     }
 
-    /**
-     * @param array $roles
-     */
     public function setRoles(array $roles): void
     {
         $this->roles = $roles;
     }
 
-    /**
-     * @param \DateTime $createdAt
-     */
     public function setCreatedAt(\DateTime $createdAt): void
     {
         $this->createdAt = $createdAt;
     }
 
-    /**
-     * @return string
-     */
     public function getPublicId(): string
     {
         return $this->publicId;
     }
 
-    /**
-     * @param string $publicId
-     */
     public function setPublicId(string $publicId): void
     {
         $this->publicId = $publicId;
@@ -159,5 +143,21 @@ class User implements UserInterface
     public function setUpdatedAt(\DateTime $updatedAt): void
     {
         $this->updatedAt = $updatedAt;
+    }
+
+    public function mightBeAssignedToTask(): bool
+    {
+        return (bool)array_diff(self::MANAGER_ROLES, $this->getRoles());
+    }
+
+    public function canManageTasks(): bool
+    {
+        foreach (self::MANAGER_ROLES as $role) {
+            if (in_array($role, $this->getRoles())) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
