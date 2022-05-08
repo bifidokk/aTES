@@ -3,6 +3,7 @@
 namespace Task\Controller;
 
 use Doctrine\ORM\EntityManagerInterface;
+use OldSound\RabbitMqBundle\RabbitMq\ProducerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,17 +21,20 @@ class TaskController
     private TokenStorageInterface $tokenStorage;
     private AssigneeResolver $assigneeResolver;
     private EntityManagerInterface $entityManager;
+    private ProducerInterface $taskProducer;
 
     public function __construct(
         TaskRepository $taskRepository,
         TokenStorageInterface $tokenStorage,
         AssigneeResolver $assigneeResolver,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        ProducerInterface $taskProducer,
     ) {
         $this->taskRepository = $taskRepository;
         $this->tokenStorage = $tokenStorage;
         $this->assigneeResolver = $assigneeResolver;
         $this->entityManager = $entityManager;
+        $this->taskProducer = $taskProducer;
     }
 
     #[Route('/api/tasks', name: 'task_list')]
@@ -75,7 +79,10 @@ class TaskController
         $this->entityManager->persist($task);
         $this->entityManager->flush();
 
-        // dispatch Task.Created event
+        $this->taskProducer->publish(json_encode([
+            'event' => 'Task.Created',
+            'user' => $task->toArray(),
+        ]), 'task_stream');
 
         return new JsonResponse($task->toArray());
     }
@@ -105,7 +112,10 @@ class TaskController
         $this->entityManager->persist($task);
         $this->entityManager->flush();
 
-        // dispatch Task.Completed event
+        $this->taskProducer->publish(json_encode([
+            'event' => 'Task.Completed',
+            'user' => $task->toArray(),
+        ]), 'task');
 
         return new JsonResponse($task->toArray());
     }
@@ -130,7 +140,10 @@ class TaskController
             $this->entityManager->persist($task);
             $this->entityManager->flush();
 
-            // dispatch Task.Assigned event
+            $this->taskProducer->publish(json_encode([
+                'event' => 'Task.Assigned',
+                'user' => $task->toArray(),
+            ]), 'task');
         }
 
         return new JsonResponse([]);
