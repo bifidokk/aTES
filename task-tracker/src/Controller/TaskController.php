@@ -93,11 +93,11 @@ class TaskController
         }
 
         if ($task->getAssignee()->getId() !== $user->getId()) {
-            throw new HttpException(422, 'Not granted');
+            throw new HttpException(401, 'Not granted');
         }
 
         if (!$task->mightBeMarkedAsCompleted()) {
-            throw new HttpException(422, 'Not granted');
+            throw new HttpException(401, 'Not granted');
         }
 
         $task->complete();
@@ -108,5 +108,31 @@ class TaskController
         // dispatch Task.Completed event
 
         return new JsonResponse($task->toArray());
+    }
+
+    #[Route('/api/tasks/reassign', name: 'task_list')]
+    public function taskMassReassign(Request $request): JsonResponse
+    {
+        $user = $this->tokenStorage->getToken()->getUser();
+
+        if (!$user->canManageTasks()) {
+            throw new HttpException(401, 'Not granted');
+        }
+
+        $tasks = $this->taskRepository->findBy([
+            'status' => Task::STATUS_ASSIGNED,
+        ]);
+
+        /** @var Task $task */
+        foreach ($tasks as $task) {
+            $task->setAssignee($this->assigneeResolver->getRandomAssignee());
+            $task->setUpdatedAt(new \DateTime());
+            $this->entityManager->persist($task);
+            $this->entityManager->flush();
+
+            // dispatch Task.Assigned event
+        }
+
+        return new JsonResponse([]);
     }
 }
