@@ -1,13 +1,16 @@
 <?php
 
-namespace App\Service\User;
+namespace Task\Service\User;
 
-use App\Entity\User;
-use App\Repository\UserRepository;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
+use Task\Entity\User;
+use Task\Repository\UserRepository;
 
+/**
+ * @method UserInterface loadUserByIdentifier(string $identifier)
+ */
 class UserProvider implements UserProviderInterface
 {
     private UserRepository $userRepository;
@@ -25,7 +28,7 @@ class UserProvider implements UserProviderInterface
             );
         }
 
-        return $this->loadUserByUsername($user->getEmail());
+        return $this->loadUserByUsername($user->getPublicId());
     }
 
     public function supportsClass(string $class)
@@ -33,10 +36,10 @@ class UserProvider implements UserProviderInterface
         return $class === User::class;
     }
 
-    public function loadUserByUsername(string $username)
+    public function loadUserByUsername(string $publicId)
     {
-        $user = $this->userRepository->findUserByEmail($username);
-
-        return $user;
+        return $this->userRepository->findOneBy([
+            'publicId' => $publicId,
+        ]);
     }
 }
