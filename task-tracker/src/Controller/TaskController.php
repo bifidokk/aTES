@@ -120,7 +120,7 @@ class TaskController
         return new JsonResponse($task->toArray());
     }
 
-    #[Route('/api/tasks/reassign', name: 'task_list')]
+    #[Route('/api/tasks/reassign', name: 'task_reassign')]
     public function taskMassReassign(Request $request): JsonResponse
     {
         $user = $this->tokenStorage->getToken()->getUser();
