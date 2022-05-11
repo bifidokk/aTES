@@ -130,12 +130,19 @@ class Task
         $this->setUpdatedAt(new \DateTime());
     }
 
-    /**
-     * @param \DateTime $updatedAt
-     */
     public function setUpdatedAt(\DateTime $updatedAt): void
     {
         $this->updatedAt = $updatedAt;
+    }
+
+    public function getPublicId(): string
+    {
+        return $this->publicId;
+    }
+
+    public function setPublicId(string $publicId): void
+    {
+        $this->publicId = $publicId;
     }
 
     public function toArray(): array
@@ -145,6 +152,7 @@ class Task
             'name' => $this->name,
             'status' => $this->status,
             'assignee' => $this->assignee->getPublicId(),
+            'jira_id' => $this->getJiraId(),
         ];
     }
 }
