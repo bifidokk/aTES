@@ -108,7 +108,7 @@ class TaskController
         $validationData = json_decode($data);
         $this->validator->validate(
             $validationData,
-            (object)['$ref' => 'file://' . realpath($this->projectDirectory . '/public/json-schema/task/created/2.json')]
+            (object)['$ref' => 'file://' . realpath('../../json-schema/task/created/2.json')]
         );
 
         if (!$this->validator->isValid()) {
@@ -160,7 +160,7 @@ class TaskController
         $validationData = json_decode($data);
         $this->validator->validate(
             $validationData,
-            (object)['$ref' => 'file://' . realpath($this->projectDirectory . '/public/json-schema/task/completed/2.json')]
+            (object)['$ref' => 'file://' . realpath('../../json-schema/task/completed/2.json')]
         );
 
         if (!$this->validator->isValid()) {
@@ -208,7 +208,7 @@ class TaskController
             $validationData = json_decode($data);
             $this->validator->validate(
                 $validationData,
-                (object)['$ref' => 'file://' . realpath($this->projectDirectory . '/public/json-schema/task/assigned/2.json')]
+                (object)['$ref' => 'file://' . realpath('../../json-schema/task/assigned/2.json')]
             );
 
             if (!$this->validator->isValid()) {
