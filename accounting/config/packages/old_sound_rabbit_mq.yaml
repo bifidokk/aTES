@@ -11,3 +11,21 @@ old_sound_rabbit_mq:
                 routing_keys:
                     - 'user_stream'
             callback: Accounting\Consumer\UserStreamConsumer
+
+        accounting_task_stream:
+            connection: default
+            exchange_options: { name: task, type: topic }
+            queue_options:
+                name: accounting_task_stream_qu
+                routing_keys:
+                    - 'task_stream'
+            callback: Accounting\Consumer\TaskStreamConsumer
+
+        accounting_task_lifecycle:
+            connection: default
+            exchange_options: { name: task, type: topic }
+            queue_options:
+                name: accounting_task_lifecycle_qu
+                routing_keys:
+                    - 'task_lifecycle'
+            callback: Accounting\Consumer\TaskConsumer

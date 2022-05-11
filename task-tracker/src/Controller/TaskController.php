@@ -167,7 +167,7 @@ class TaskController
             throw new HttpException(422, 'Invalid event schema');
         }
 
-        $this->taskProducer->publish($data, 'task');
+        $this->taskProducer->publish($data, 'task_lifecycle');
 
         return new JsonResponse($task->toArray());
     }
@@ -215,7 +215,7 @@ class TaskController
                 throw new HttpException(422, 'Invalid event schema');
             }
 
-            $this->taskProducer->publish($data, 'task');
+            $this->taskProducer->publish($data, 'task_lifecycle');
         }
 
         return new JsonResponse([]);
