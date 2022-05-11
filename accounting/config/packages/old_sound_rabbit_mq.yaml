@@ -2,14 +2,12 @@ old_sound_rabbit_mq:
     connections:
         default:
             url: '%env(RABBITMQ_URL)%'
-#    producers:
-#        # use 'old_sound_rabbit_mq.task_producer' service to send data.
-#        task:
-#            connection:       default
-#            exchange_options: { name: 'task', type: direct }
-#    consumers:
-#        task:
-#            connection:       default
-#            exchange_options: { name: 'task', type: direct }
-#            queue_options:    { name: 'task'}
-#            callback:         App\Consumer\TaskConsumer
+    consumers:
+        accounting_user_stream:
+            connection: default
+            exchange_options: { name: user, type: topic }
+            queue_options:
+                name: accounting_user_stream_qu
+                routing_keys:
+                    - 'user_stream'
+            callback: Accounting\Consumer\UserStreamConsumer

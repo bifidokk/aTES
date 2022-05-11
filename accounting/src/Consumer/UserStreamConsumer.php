@@ -1,13 +1,13 @@
 <?php
 
-namespace Task\Consumer;
+namespace Accounting\Consumer;
 
+use Accounting\Entity\User;
+use Accounting\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use OldSound\RabbitMqBundle\RabbitMq\ConsumerInterface;
 use PhpAmqpLib\Message\AMQPMessage;
 use Psr\Log\LoggerInterface;
-use Task\Entity\User;
-use Task\Repository\UserRepository;
 
 class UserStreamConsumer implements ConsumerInterface
 {
@@ -50,7 +50,6 @@ class UserStreamConsumer implements ConsumerInterface
             ]);
 
             if ($user === null) {
-                // add logs
                 return true;
             }
         } else {
