@@ -28,6 +28,11 @@ class Task
     protected string $name = '';
 
     /**
+     * @ORM\Column(type="string", length=32, options={"default" : ""})
+     */
+    protected string $jiraId = '';
+
+    /**
      * @ORM\Column(type="datetime")
      */
     protected \DateTime $createdAt;
@@ -72,6 +77,16 @@ class Task
     public function setName(string $name): void
     {
         $this->name = $name;
+    }
+
+    public function getJiraId(): string
+    {
+        return $this->jiraId;
+    }
+
+    public function setJiraId(string $jiraId): void
+    {
+        $this->jiraId = $jiraId;
     }
 
     public function getAssignee(): ?User

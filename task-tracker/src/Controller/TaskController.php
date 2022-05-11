@@ -71,8 +71,17 @@ class TaskController
             throw new HttpException(400, 'Invalid json');
         }
 
+        if (str_contains($data['name'], '[') || str_contains($data['name'], ']')) {
+            throw new HttpException(422, 'Invalid name');
+        }
+
+        if (!isset($data['jira_id'])) {
+            throw new HttpException(400, 'Invalid json');
+        }
+
         $task = new Task();
         $task->setName($data['name']);
+        $task->setJiraId($data['jira_id']);
         $task->setOwner($user);
         $task->setAssignee($this->assigneeResolver->getRandomAssignee());
 
