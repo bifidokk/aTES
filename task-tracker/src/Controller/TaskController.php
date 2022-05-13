@@ -25,15 +25,13 @@ class TaskController
     private EntityManagerInterface $entityManager;
     private ProducerInterface $taskProducer;
     private Validator $validator;
-    private string $projectDirectory;
 
     public function __construct(
         TaskRepository $taskRepository,
         TokenStorageInterface $tokenStorage,
         AssigneeResolver $assigneeResolver,
         EntityManagerInterface $entityManager,
-        ProducerInterface $taskProducer,
-        string $projectDirectory
+        ProducerInterface $taskProducer
     ) {
         $this->taskRepository = $taskRepository;
         $this->tokenStorage = $tokenStorage;
@@ -42,7 +40,6 @@ class TaskController
         $this->taskProducer = $taskProducer;
 
         $this->validator = new Validator();
-        $this->projectDirectory = $projectDirectory;
     }
 
     #[Route('/api/tasks', name: 'task_list')]
@@ -96,7 +93,7 @@ class TaskController
         $this->entityManager->persist($task);
         $this->entityManager->flush();
 
-        $data = json_encode([
+        $eventData = json_encode([
             'event_id' => Uuid::v4()->toRfc4122(),
             'event_version' => 2,
             'event_name' => 'Task.Created',
@@ -105,7 +102,7 @@ class TaskController
             'data' => $task->toArray(),
         ]);
 
-        $validationData = json_decode($data);
+        $validationData = json_decode($eventData);
         $this->validator->validate(
             $validationData,
             (object)['$ref' => 'file://' . realpath('../../json-schema/task/created/2.json')]
@@ -115,7 +112,7 @@ class TaskController
             throw new HttpException(422, 'Invalid event schema');
         }
 
-        $this->taskProducer->publish($data, 'task_stream');
+        $this->taskProducer->publish($eventData, 'task_stream');
 
         return new JsonResponse($task->toArray());
     }
@@ -145,7 +142,7 @@ class TaskController
         $this->entityManager->persist($task);
         $this->entityManager->flush();
 
-        $data = json_encode([
+        $eventData = json_encode([
             'event_id' => Uuid::v4()->toRfc4122(),
             'event_version' => 2,
             'event_name' => 'Task.Completed',
@@ -157,7 +154,7 @@ class TaskController
             ],
         ]);
 
-        $validationData = json_decode($data);
+        $validationData = json_decode($eventData);
         $this->validator->validate(
             $validationData,
             (object)['$ref' => 'file://' . realpath('../../json-schema/task/completed/2.json')]
@@ -167,7 +164,7 @@ class TaskController
             throw new HttpException(422, 'Invalid event schema');
         }
 
-        $this->taskProducer->publish($data, 'task_lifecycle');
+        $this->taskProducer->publish($eventData, 'task_lifecycle');
 
         return new JsonResponse($task->toArray());
     }
@@ -192,7 +189,7 @@ class TaskController
             $this->entityManager->persist($task);
             $this->entityManager->flush();
 
-            $data = json_encode([
+            $eventData = json_encode([
                 'event_id' => Uuid::v4()->toRfc4122(),
                 'event_version' => 2,
                 'event_name' => 'Task.Assigned',
@@ -205,7 +202,7 @@ class TaskController
                 ],
             ]);
 
-            $validationData = json_decode($data);
+            $validationData = json_decode($eventData);
             $this->validator->validate(
                 $validationData,
                 (object)['$ref' => 'file://' . realpath('../../json-schema/task/assigned/2.json')]
@@ -215,7 +212,7 @@ class TaskController
                 throw new HttpException(422, 'Invalid event schema');
             }
 
-            $this->taskProducer->publish($data, 'task_lifecycle');
+            $this->taskProducer->publish($eventData, 'task_lifecycle');
         }
 
         return new JsonResponse([]);
