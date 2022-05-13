@@ -128,4 +128,15 @@ class User implements UserInterface
     {
         $this->updatedAt = $updatedAt;
     }
+
+    public function isManager(): bool
+    {
+        foreach (self::MANAGER_ROLES as $role) {
+            if (in_array($role, $this->getRoles())) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

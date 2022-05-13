@@ -94,4 +94,14 @@ class Transaction
     {
         $this->meta = $meta;
     }
+
+    public function toArray(): array
+    {
+        return [
+            'public_id' => $this->publicId,
+            'amount' => $this->amount,
+            'user' => $this->user->getPublicId(),
+            'create_at' => $this->createdAt->format(DATE_ATOM),
+        ];
+    }
 }

@@ -78,4 +78,13 @@ class Balance
 
         $this->setAmount($amount);
     }
+
+    public function toArray(): array
+    {
+        return [
+            'public_id' => $this->publicId,
+            'amount' => $this->amount,
+            'user' => $this->user->getPublicId(),
+        ];
+    }
 }
