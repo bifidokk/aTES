@@ -151,6 +151,7 @@ class TaskController
             'data' => [
                 'public_id' => $task->getPublicId(),
                 'status' => $task->getStatus(),
+                'completed_by' => $task->getAssignee()->getPublicId(),
             ],
         ]);
 

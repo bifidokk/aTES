@@ -23,7 +23,7 @@
     "data": {
       "type": "object",
       "description": "Completed task",
-      "required": [ "public_id", "status" ],
+      "required": [ "public_id", "status", "completed_by" ],
       "properties" : {
         "public_id": {
           "type": "string",
@@ -32,6 +32,10 @@
         "status": {
           "type": "string",
           "description": "Task status."
+        },
+        "completed_by": {
+          "type": "string",
+          "description": "Task completed by account public id."
         }
       }
     }
