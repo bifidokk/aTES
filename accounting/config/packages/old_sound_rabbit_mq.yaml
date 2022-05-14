@@ -2,6 +2,10 @@ old_sound_rabbit_mq:
     connections:
         default:
             url: '%env(RABBITMQ_URL)%'
+    producers:
+        transaction:
+            connection: default
+            exchange_options: { name: 'transaction', type: topic }
     consumers:
         accounting_user_stream:
             connection: default

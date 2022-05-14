@@ -4,22 +4,18 @@ namespace Accounting\Command;
 
 use Accounting\Entity\Balance;
 use Accounting\Repository\BalanceRepository;
-use Accounting\Repository\TransactionRepository;
-use Accounting\Repository\UserRepository;
 use Accounting\Service\Transaction\TaskTransactionService;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class DailyTopUpCommand extends Command
+class DailyPayoutCommand extends Command
 {
-    protected static $defaultName = 'app:daily-top-up';
+    protected static $defaultName = 'app:daily-payout';
     private TaskTransactionService $taskTransactionService;
     private BalanceRepository $balanceRepository;
 
     public function __construct(
-        TransactionRepository $transactionRepository,
-        UserRepository $userRepository,
         TaskTransactionService $taskTransactionService,
         BalanceRepository $balanceRepository
     ) {
@@ -41,7 +37,7 @@ class DailyTopUpCommand extends Command
         /** @var Balance $balance */
         foreach ($balances as $balance) {
             if (bccomp($balance->getAmount(), '0', 3) === 1) {
-                $this->taskTransactionService->createTopUpTransaction($balance->getUser(), $balance->getAmount());
+                $this->taskTransactionService->createPayoutTransaction($balance->getUser(), $balance->getAmount());
             }
         }
 

@@ -14,7 +14,7 @@ class Transaction
     public const STATUS_COMPLETED = 'completed';
 
     public const TYPE_DEPOSIT = 'deposit';
-    public const TYPE_TOP_UP = 'top_up';
+    public const TYPE_PAYOUT = 'payout';
 
     /**
      * @ORM\Id
@@ -104,6 +104,22 @@ class Transaction
     {
         $this->type = $type;
     }
+
+    public function getStatus(): string
+    {
+        return $this->status;
+    }
+
+    public function getCreatedAt(): \DateTime
+    {
+        return $this->createdAt;
+    }
+
+    public function getPublicId(): string
+    {
+        return $this->publicId;
+    }
+
 
     public function toArray(): array
     {

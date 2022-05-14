@@ -75,6 +75,11 @@ class User implements UserInterface
         return array_unique($roles);
     }
 
+    public function getEmail(): string
+    {
+        return $this->email;
+    }
+
     public function setEmail(string $email): void
     {
         $this->email = $email;
