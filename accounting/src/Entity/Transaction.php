@@ -95,6 +95,16 @@ class Transaction
         $this->meta = $meta;
     }
 
+    public function getType(): string
+    {
+        return $this->type;
+    }
+
+    public function setType(string $type): void
+    {
+        $this->type = $type;
+    }
+
     public function toArray(): array
     {
         return [

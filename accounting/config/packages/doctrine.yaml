@@ -16,6 +16,9 @@ doctrine:
                 prefix: 'Accounting\Entity'
                 alias: Accounting
                 type: annotation
+        dql:
+            string_functions:
+                cast: Oro\ORM\Query\AST\Functions\Cast
 
 when@test:
     doctrine:

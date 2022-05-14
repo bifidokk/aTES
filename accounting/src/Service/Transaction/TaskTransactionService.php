@@ -54,6 +54,7 @@ class TaskTransactionService
         ]);
 
         $transaction = new Transaction();
+        $transaction->setType(Transaction::TYPE_TOP_UP);
         $transaction->setAmount($this->costService->getCompletedTaskCost());
         $transaction->setUser($user);
         $transaction->setMeta([
