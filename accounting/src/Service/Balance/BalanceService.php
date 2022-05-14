@@ -37,21 +37,4 @@ class BalanceService
         $this->entityManager->persist($balance);
         $this->entityManager->flush();
     }
-
-    public function resetBalance(User $user, Transaction $transaction): void
-    {
-        $balance = $this->balanceRepository->findOneBy([
-            'user' => $user,
-        ]);
-
-        if ($balance === null) {
-            $balance = new Balance();
-            $balance->setUser($user);
-        }
-
-        $balance->reset();
-
-        $this->entityManager->persist($balance);
-        $this->entityManager->flush();
-    }
 }

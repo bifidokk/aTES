@@ -71,13 +71,13 @@ class TaskTransactionService
     {
         $transaction = new Transaction();
         $transaction->setType(Transaction::TYPE_TOP_UP);
-        $transaction->setAmount($amount);
+        $transaction->setAmount(bcmul($amount, '-1', '3'));
         $transaction->setUser($user);
 
         $this->entityManager->persist($transaction);
         $this->entityManager->flush();
 
-        $this->balanceService->resetBalance($user, $transaction);
+        $this->balanceService->updateBalance($user, $transaction);
 
         // send notification event
     }
