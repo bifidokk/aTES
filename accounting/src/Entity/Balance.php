@@ -71,12 +71,19 @@ class Balance
         $this->amount = $amount;
     }
 
-    public function applyTransaction(Transaction $transaction)
+    public function applyTransaction(Transaction $transaction): void
     {
         $currentAmount = $this->getAmount();
         $amount = bcadd($currentAmount, $transaction->getAmount());
 
         $this->setAmount($amount);
+        $this->updatedAt = new \DateTime();
+    }
+
+    public function reset(): void
+    {
+        $this->setAmount('0');
+        $this->updatedAt = new \DateTime();
     }
 
     public function toArray(): array

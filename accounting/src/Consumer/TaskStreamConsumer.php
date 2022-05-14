@@ -27,7 +27,7 @@ class TaskStreamConsumer implements ConsumerInterface
         switch ($content['event_name']) {
             case self::TASK_CREATED_EVENT_NAME:
                 if ($content['data']['status'] === 'assigned') {
-                    $this->taskTransactionService->createDepositTaskTransaction($content['data']);
+                    $this->taskTransactionService->createAssignedTaskTransaction($content['data']);
                 }
 
                 break;

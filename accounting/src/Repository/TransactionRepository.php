@@ -7,7 +7,7 @@ use Doctrine\ORM\EntityRepository;
 
 class TransactionRepository extends EntityRepository
 {
-    public function calculateDailyEarnings()
+    public function calculateDailyEarnings(): array
     {
         $dateFrom = new \DateTime();
         $dateTo = clone $dateFrom;
@@ -18,8 +18,8 @@ class TransactionRepository extends EntityRepository
         return $this
             ->createQueryBuilder('t')
             ->select('
-                SUM(CASE WHEN t.status = :completed AND t.type = :deposit AND cast(t.amount as decimal) < 0 THEN cast(t.amount as decimal) ELSE 0 END) as deposit,
-                SUM(CASE WHEN t.status = :completed AND t.type = :top_up AND cast(t.amount as decimal) > 0 THEN cast(t.amount as decimal) ELSE 0 END) as top_up
+                SUM(CASE WHEN t.status = :completed AND t.type = :deposit AND cast(t.amount as decimal) < 0 THEN cast(t.amount as decimal) ELSE 0 END) as deposit_withdraw,
+                SUM(CASE WHEN t.status = :completed AND t.type = :top_up AND cast(t.amount as decimal) > 0 THEN cast(t.amount as decimal) ELSE 0 END) as as deposit_refund
             ')
             ->andWhere('t.status = :completed')
             ->andWhere('t.createdAt >= :date_from')
@@ -27,7 +27,29 @@ class TransactionRepository extends EntityRepository
             ->setParameters([
                 'completed' => Transaction::STATUS_COMPLETED,
                 'deposit' => Transaction::TYPE_DEPOSIT,
-                'top_up' => Transaction::TYPE_TOP_UP,
+                'date_from' => $dateFrom,
+                'date_to' => $dateTo,
+            ])
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function calculateDayUserEarnings(\DateTime $dateFrom, \DateTime $dateTo)
+    {
+        return $this
+            ->createQueryBuilder('t')
+            ->select('
+                IDENTITY(t.user) as user_id,
+                SUM(CASE WHEN t.status = :completed AND t.type = :deposit AND cast(t.amount as decimal) < 0 THEN cast(t.amount as decimal) ELSE 0 END) as deposit_withdraw,
+                SUM(CASE WHEN t.status = :completed AND t.type = :deposit AND cast(t.amount as decimal) > 0 THEN cast(t.amount as decimal) ELSE 0 END) as deposit_refund
+            ')
+            ->andWhere('t.status = :completed')
+            ->andWhere('t.createdAt >= :date_from')
+            ->andWhere('t.createdAt <= :date_to')
+            ->groupBy('t.user')
+            ->setParameters([
+                'completed' => Transaction::STATUS_COMPLETED,
+                'deposit' => Transaction::TYPE_DEPOSIT,
                 'date_from' => $dateFrom,
                 'date_to' => $dateTo,
             ])

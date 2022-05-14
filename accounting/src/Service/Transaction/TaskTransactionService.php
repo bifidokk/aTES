@@ -3,6 +3,7 @@
 namespace Accounting\Service\Transaction;
 
 use Accounting\Entity\Transaction;
+use Accounting\Entity\User;
 use Accounting\Repository\UserRepository;
 use Accounting\Service\Balance\BalanceService;
 use Accounting\Service\Cost\TaskCostService;
@@ -27,7 +28,7 @@ class TaskTransactionService
         $this->balanceService = $balanceService;
     }
 
-    public function createDepositTaskTransaction(array $data): void
+    public function createAssignedTaskTransaction(array $data): void
     {
         $user = $this->userRepository->findOneBy([
             'publicId' => $data['assignee'],
@@ -47,14 +48,13 @@ class TaskTransactionService
         $this->balanceService->updateBalance($user, $transaction);
     }
 
-    public function createTopUpTaskTransaction(array $data): void
+    public function createCompletedTaskTransaction(array $data): void
     {
         $user = $this->userRepository->findOneBy([
             'publicId' => $data['completed_by'],
         ]);
 
         $transaction = new Transaction();
-        $transaction->setType(Transaction::TYPE_TOP_UP);
         $transaction->setAmount($this->costService->getCompletedTaskCost());
         $transaction->setUser($user);
         $transaction->setMeta([
@@ -65,5 +65,20 @@ class TaskTransactionService
         $this->entityManager->flush();
 
         $this->balanceService->updateBalance($user, $transaction);
+    }
+
+    public function createTopUpTransaction(User $user, string $amount): void
+    {
+        $transaction = new Transaction();
+        $transaction->setType(Transaction::TYPE_TOP_UP);
+        $transaction->setAmount($amount);
+        $transaction->setUser($user);
+
+        $this->entityManager->persist($transaction);
+        $this->entityManager->flush();
+
+        $this->balanceService->resetBalance($user, $transaction);
+
+        // send notification event
     }
 }

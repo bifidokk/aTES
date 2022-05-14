@@ -23,7 +23,7 @@ class DashboardController
     public function getDailyEarnings(): JsonResponse
     {
         $data = $this->transactionRepository->calculateDailyEarnings()[0];
-        $data['result'] = $data['deposit'] + $data['top_up'];
+        $data['balance'] = $data['deposit_withdraw'] + $data['deposit_refund'];
 
         return new JsonResponse($data);
     }

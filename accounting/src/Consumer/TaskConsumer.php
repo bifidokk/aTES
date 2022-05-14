@@ -28,14 +28,14 @@ class TaskConsumer implements ConsumerInterface
         switch ($content['event_name']) {
             case self::TASK_ASSIGNED_EVENT_NAME:
                 if ($content['data']['status'] === 'assigned') {
-                    $this->taskTransactionService->createDepositTaskTransaction($content['data']);
+                    $this->taskTransactionService->createAssignedTaskTransaction($content['data']);
                 }
 
                 break;
 
             case self::TASK_COMPLETED_EVENT_NAME:
                 if ($content['data']['status'] === 'completed') {
-                    $this->taskTransactionService->createTopUpTaskTransaction($content['data']);
+                    $this->taskTransactionService->createCompletedTaskTransaction($content['data']);
                 }
 
                 break;
