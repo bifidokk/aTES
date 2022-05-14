@@ -54,7 +54,8 @@ class TaskTransactionService
         $transaction->setUser($user);
         $transaction->setMeta([
             'task_public_id' => $data['public_id'],
-            'task_name' => $data['name'] ?? '',
+            'task_name' => $data['name'],
+            'task_jira_id' => $data['jira_id'],
         ]);
 
         $this->entityManager->persist($transaction);
@@ -75,6 +76,8 @@ class TaskTransactionService
         $transaction->setUser($user);
         $transaction->setMeta([
             'task_public_id' => $data['public_id'],
+            'task_name' => $data['name'],
+            'task_jira_id' => $data['jira_id'],
         ]);
 
         $this->entityManager->persist($transaction);

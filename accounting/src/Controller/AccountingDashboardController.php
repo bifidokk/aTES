@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
 #[IsGranted('ROLE_USER')]
-class DashboardController
+class AccountingDashboardController
 {
     private TransactionRepository $transactionRepository;
 
@@ -23,7 +23,7 @@ class DashboardController
     public function getDailyEarnings(): JsonResponse
     {
         $data = $this->transactionRepository->calculateDailyEarnings()[0];
-        $data['balance'] = $data['deposit_withdraw'] + $data['deposit_refund'];
+        $data['balance'] = bcadd((string) $data['deposit_withdraw'], (string) $data['deposit_refund'], 3);
 
         return new JsonResponse($data);
     }

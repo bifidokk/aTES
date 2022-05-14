@@ -34,7 +34,7 @@ class TransactionRepository extends EntityRepository
             ->getResult();
     }
 
-    public function calculateDayUserEarnings(\DateTime $dateFrom, \DateTime $dateTo)
+    public function calculateDayUserEarnings(\DateTime $dateFrom, \DateTime $dateTo): array
     {
         return $this
             ->createQueryBuilder('t')
@@ -53,6 +53,27 @@ class TransactionRepository extends EntityRepository
                 'date_from' => $dateFrom,
                 'date_to' => $dateTo,
             ])
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findHighestCostTaskForPeriod(\DateTime $dateFrom, \DateTime $dateTo): array
+    {
+        return $this
+            ->createQueryBuilder('t')
+            ->select('MAX(cast(t.amount as decimal)) as amount')
+            ->addSelect('t')
+            ->andWhere('t.status = :completed')
+            ->andWhere('t.type = :deposit')
+            ->andWhere('t.createdAt >= :date_from')
+            ->andWhere('t.createdAt <= :date_to')
+            ->setParameters([
+                'completed' => Transaction::STATUS_COMPLETED,
+                'deposit' => Transaction::TYPE_DEPOSIT,
+                'date_from' => $dateFrom,
+                'date_to' => $dateTo,
+            ])
+            ->groupBy('t.id')
             ->getQuery()
             ->getResult();
     }

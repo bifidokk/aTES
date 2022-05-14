@@ -152,6 +152,8 @@ class TaskController
                 'public_id' => $task->getPublicId(),
                 'status' => $task->getStatus(),
                 'completed_by' => $task->getAssignee()->getPublicId(),
+                'name' => $task->getName(),
+                'jira_id' => $task->getJiraId(),
             ],
         ]);
 
