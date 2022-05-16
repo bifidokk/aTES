@@ -75,6 +75,11 @@ class User implements UserInterface
         return array_unique($roles);
     }
 
+    public function getEmail(): string
+    {
+        return $this->email;
+    }
+
     public function setEmail(string $email): void
     {
         $this->email = $email;
@@ -127,5 +132,16 @@ class User implements UserInterface
     public function setUpdatedAt(\DateTime $updatedAt): void
     {
         $this->updatedAt = $updatedAt;
+    }
+
+    public function isManager(): bool
+    {
+        foreach (self::MANAGER_ROLES as $role) {
+            if (in_array($role, $this->getRoles())) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

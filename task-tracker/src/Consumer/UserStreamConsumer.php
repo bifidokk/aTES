@@ -61,6 +61,7 @@ class UserStreamConsumer implements ConsumerInterface
 
         $user->setName($content['user']['name']);
         $user->setRoles($content['user']['roles']);
+        $user->setUpdatedAt(new \DateTime());
 
         $this->entityManager->persist($user);
         $this->entityManager->flush();

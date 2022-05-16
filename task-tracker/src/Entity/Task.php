@@ -28,6 +28,11 @@ class Task
     protected string $name = '';
 
     /**
+     * @ORM\Column(type="string", length=32, options={"default" : ""})
+     */
+    protected string $jiraId = '';
+
+    /**
      * @ORM\Column(type="datetime")
      */
     protected \DateTime $createdAt;
@@ -74,6 +79,16 @@ class Task
         $this->name = $name;
     }
 
+    public function getJiraId(): string
+    {
+        return $this->jiraId;
+    }
+
+    public function setJiraId(string $jiraId): void
+    {
+        $this->jiraId = $jiraId;
+    }
+
     public function getAssignee(): ?User
     {
         return $this->assignee;
@@ -115,12 +130,19 @@ class Task
         $this->setUpdatedAt(new \DateTime());
     }
 
-    /**
-     * @param \DateTime $updatedAt
-     */
     public function setUpdatedAt(\DateTime $updatedAt): void
     {
         $this->updatedAt = $updatedAt;
+    }
+
+    public function getPublicId(): string
+    {
+        return $this->publicId;
+    }
+
+    public function setPublicId(string $publicId): void
+    {
+        $this->publicId = $publicId;
     }
 
     public function toArray(): array
@@ -130,6 +152,7 @@ class Task
             'name' => $this->name,
             'status' => $this->status,
             'assignee' => $this->assignee->getPublicId(),
+            'jira_id' => $this->getJiraId(),
         ];
     }
 }

@@ -28,3 +28,13 @@ services:
         factory: [ '@doctrine.orm.entity_manager', getRepository ]
         arguments:
             - Accounting\Entity\User
+
+    Accounting\Repository\TransactionRepository:
+        factory: [ '@doctrine.orm.entity_manager', getRepository ]
+        arguments:
+            - Accounting\Entity\Transaction
+
+    Accounting\Repository\BalanceRepository:
+        factory: [ '@doctrine.orm.entity_manager', getRepository ]
+        arguments:
+            - Accounting\Entity\Balance
