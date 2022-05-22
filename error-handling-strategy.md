@@ -4,4 +4,5 @@
   * send user input data, check if we created data and produced necessary events
   * send mocked MB data to consumers, check if we created data and produced necessary events
 4. Add transactional outbox pattern to save events in DB table before sending to MB - allows us to avoid lost messages if MB is down
+UPD: retry/ack strategy is enough instead of transactional outbox
 5. Add dead letter DB table to save "invalid" events to forward them to the special consumer.
