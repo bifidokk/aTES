@@ -1,23 +1,23 @@
 ## Task tracker
 
-1. Таск-трекер должен быть отдельным дашбордом и доступен всем сотрудникам компании UberPopug Inc.
+1. Task tracker should have a dashboard. All UberPopug Inc. employees should have access to the dashboard.
 * Actor: Account
 * Data: Account id
 * Query: Get tasks
 
-2. Авторизация в таск-трекере должна выполняться через общий сервис авторизации
+2. There should be an authorization service
 * Actor: Account
 * Command: Login to task tracker
 * Data: Account credentials
 * Event: Account authorized
 
-3. В таск-трекере должны быть только задачи.
+3. Task tracker should contain only tasks
 
  
  ![](static/okay.png)
 
 
-4. Новые таски может создавать кто угодно
+4. Every user have possibility to create a new task
 * Actor: Account
 * Command: Create a new task
 * Data: Task
@@ -27,13 +27,13 @@
 * Event: Task created
 * Event: Task assigned
 
-5. Менеджеры или администраторы должны иметь кнопку «заассайнить задачи», которая возьмёт все открытые задачи и рандомно заассайнит каждую на любого из сотрудников
+5. Managers or administrators should be able to assign all open tasks to users randomly my one action
 * Actor: Admin/manager role account
 * Command: Assign tasks
 * Data: -
 * Event: Task assigned (single event for every task)
 
-6. Каждый сотрудник должен иметь возможность видеть в отдельном месте список заассайненных на него задач + отметить задачу выполненной.
+6. Every user should be able to view his tasks list and mark a task as done.
 * Read model: 
   * Actor: Account
   * Data: Account id
@@ -45,7 +45,7 @@
   * Event: Task completed
 
 ## Accounting
-1. Аккаунтинг должен быть в отдельном дашборде
+1. There should be a separated dashboard for accounting
 * Worker account read model queries:
   * get account balance
   * get account logs
@@ -54,34 +54,34 @@
   * get all account logs
   * get daily earning statistics
 
-2. Авторизация в дешборде аккаунтинга должна выполняться через общий сервис аутентификации
+2. Accounting dashboard authorization process should use the authorization service
 * Actor: Account
 * Command: Login to accounting
 * Data: Account credentials
 * Event: Account authorized
 
-3. У каждого из сотрудников должен быть свой счёт
+3. Every user should have his own account
 * Actor: Event - Account created
 * Command: Create account balance
 * Data: Account id
 * Event: Account balance created
 
-4. Расценки
-   * деньги списываются сразу после ассайна на сотрудника
+4. Prices
+   * money debiting occurs after a task has been assigned
      * Actor: Event - Task assigned
      * Command: Create transaction
      * Data:
        * Account id
        * Assigned task fee amount (negative value)
      * Event: Transaction created
-   * деньги начисляются после выполнения задачи
+   * money accrual occurs after task is completed
      * Actor: Event - Task completed
      * Command: Create transaction
      * Data:
        * Account id
        * Completed task amount
      * Event: Transaction created
-   * отрицательный баланс переносится на следующий день
+   * negative balance is carried forward to the next day
      * Actor: Event - Transaction created
      * Command: Update account balance
      * Data:
@@ -89,7 +89,7 @@
        * Transaction amount
      * Event: Account balance updated
 
-5. Дешборд должен выводить количество заработанных топ-менеджментом за сегодня денег.
+5. The dashboard should contain information about the amount of money earned by top-management for today.
 * Read model: get dashboard daily data. We can make dashboard report instead of aggregate all transactions on fly. For this case:
   * Actor: Account
   * Data: Account id
@@ -101,7 +101,7 @@
     * Transaction amount
   * Event: Accounting daily report updated
 
-6. В конце дня необходимо: считать сколько денег сотрудник получил за рабочий день, отправлять на почту сумму выплаты.
+6. At the end of every day it's needed to calculate the amount of money earned by every employee and send the payment information by email.
 * Actor: Crontab or any scheduler 
 * Command: Calculate account daily earnings
 * Data:
@@ -115,7 +115,7 @@
     * Daily earning data
 * Event: Account earning notification sent
 
-7. После выплаты баланса (в конце дня) он должен обнуляться, и в аудитлоге всех операций аккаунтинга должно быть отображено, что была выплачена сумма.
+7. The balance should be reset after the daily payment. The audit log should contain the payment information.
 * Actor: Event: Notification sent
 * Command: Create account top-up transaction
 * Data:
@@ -129,7 +129,7 @@
    * Account id
 * Event: Account balance reset
 
-8. Дашборд должен выводить информацию по дням
+8. The dashboard should contain the payments daily report.
 * Actor: Account
 * Data: Account id
 * Query: Get audit report
@@ -139,17 +139,17 @@
 
 Analytics service collects events and generates reports
 
-1. Аналитика — это отдельный дашборд, доступный только админам.
+1. There should be a separated dashboard for analytics. Only administrators should have access to it.
 * Actor: Account
 * Data: Account (admin role)
 * Query: Get analytics report data
 
-2. Нужно указывать, сколько заработал топ-менеджмент за сегодня и сколько попугов ушло в минус.
+2. The analytics dashboard should contain information about top-management earnings and how many employees have negative balances.
 * Actor: Account
 * Data: Account (admin role)
 * Query: Get earning daily report data
 
-3. Нужно показывать самую дорогую задачу за день, неделю или месяц.
+3. The analytics dashboard should contain information about the most high-cost task for a day, week and month.
 * Actor: Account
 * Data: Account (admin role)
 * Query: Get daily highest price task report data
