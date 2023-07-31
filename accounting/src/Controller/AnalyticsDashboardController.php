@@ -3,6 +3,7 @@
 namespace Accounting\Controller;
 
 use Accounting\Entity\Transaction;
+use Accounting\Repository\TaskRepository;
 use Accounting\Repository\TransactionRepository;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -13,11 +14,14 @@ use Symfony\Component\Routing\Annotation\Route;
 class AnalyticsDashboardController
 {
     private TransactionRepository $transactionRepository;
+    private TaskRepository $taskRepository;
 
     public function __construct(
-        TransactionRepository $transactionRepository
+        TransactionRepository $transactionRepository,
+        TaskRepository $taskRepository
     ) {
         $this->transactionRepository = $transactionRepository;
+        $this->taskRepository = $taskRepository;
     }
 
     #[Route('/api/analytics/user_earnings', name: 'analytics_user_earnings')]
@@ -66,12 +70,19 @@ class AnalyticsDashboardController
         $data = $this->transactionRepository->findHighestCostTaskForPeriod($dateFrom, $dateTo);
         /** @var Transaction $transaction */
         $transaction = $data[0][0];
+        $task = null;
+
+        if (isset($transaction->getMeta()['task_public_id'])) {
+            $task = $this->taskRepository->findOneBy([
+                'publicId' => $transaction->getMeta()['task_public_id'],
+            ]);
+        }
 
         $data = [
             'amount' => $transaction->getAmount(),
-            'task_public_id' => $transaction->getMeta()['task_public_id'] ?? null,
-            'task_name' => $transaction->getMeta()['task_name'] ?? null,
-            'task_jira_id' => $transaction->getMeta()['task_jira_id'] ?? null,
+            'task_public_id' => $task?->getPublicId(),
+            'task_name' => $task?->getName(),
+            'task_jira_id' => $task?->getJiraId(),
         ];
 
         return new JsonResponse($data);
