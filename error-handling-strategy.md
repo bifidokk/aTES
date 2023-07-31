@@ -1,3 +1,5 @@
+## Error handling strategy
+
 1. Add unit tests to all services
 2. Add integration tests
 3. Add "black box" test for every service
